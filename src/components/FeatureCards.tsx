@@ -1,10 +1,26 @@
 import { Zap, ShieldCheck, BarChart3, Bell } from "lucide-react";
 
 const features = [
-  { icon: Zap, title: "Auto-categorize", desc: "Every transaction sorted instantly across 30+ categories." },
-  { icon: BarChart3, title: "Monthly reports", desc: "Beautiful breakdowns of where your money actually went." },
-  { icon: Bell, title: "Smart alerts", desc: "Know before you overspend with personalized nudges." },
-  { icon: ShieldCheck, title: "Bank-grade security", desc: "256-bit encryption. Read-only access. Always." },
+  {
+    icon: Zap,
+    title: "Auto-categorize",
+    desc: "Every transaction sorted instantly across 30+ categories.",
+  },
+  {
+    icon: BarChart3,
+    title: "Monthly reports",
+    desc: "Beautiful breakdowns of where your money actually went.",
+  },
+  {
+    icon: Bell,
+    title: "Smart alerts",
+    desc: "Know before you overspend with personalized nudges.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Bank-grade security",
+    desc: "256-bit encryption. Read-only access. Always.",
+  },
 ];
 
 const FeatureCards = () => {

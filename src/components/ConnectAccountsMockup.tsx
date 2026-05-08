@@ -23,7 +23,10 @@ const ConnectAccountsMockup = () => {
 
         <div className="mb-4 space-y-2">
           {banks.map((b) => (
-            <div key={b.name} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+            <div
+              key={b.name}
+              className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
+            >
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary">
                 <Building2 className="h-4 w-4 text-foreground" />
               </div>
@@ -44,7 +47,10 @@ const ConnectAccountsMockup = () => {
 
         <div className="space-y-2">
           {upi.map((u) => (
-            <div key={u.name} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3">
+            <div
+              key={u.name}
+              className="flex items-center gap-3 rounded-xl border border-border bg-card p-3"
+            >
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent">
                 <Smartphone className="h-4 w-4 text-accent-foreground" />
               </div>

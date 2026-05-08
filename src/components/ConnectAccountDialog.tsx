@@ -63,7 +63,9 @@ const ConnectAccountDialog = ({
 
           <div className="flex items-start gap-2 rounded-lg bg-secondary p-3 text-xs text-muted-foreground">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-            <span>End-to-end encrypted via account aggregator. Read-only — we can't move your money.</span>
+            <span>
+              End-to-end encrypted via account aggregator. Read-only — we can't move your money.
+            </span>
           </div>
 
           <Button className="w-full bg-gradient-hero shadow-elegant hover:opacity-90">

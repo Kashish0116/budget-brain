@@ -1,15 +1,26 @@
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Wallet, PieChart } from "lucide-react";
+import { CATEGORY_COLORS, Category } from "@/lib/finance";
 
-const categories = [
-  { name: "Food & Dining", amount: 18420, pct: 32, color: "oklch(0.62 0.18 155)" },
-  { name: "Shopping", amount: 12380, pct: 22, color: "oklch(0.74 0.16 165)" },
-  { name: "Transport", amount: 8650, pct: 15, color: "oklch(0.65 0.15 200)" },
-  { name: "Bills & Utilities", amount: 7240, pct: 13, color: "oklch(0.7 0.14 80)" },
-  { name: "Entertainment", amount: 5120, pct: 9, color: "oklch(0.7 0.18 30)" },
-];
+interface DashboardPreviewProps {
+  totalSpent: number;
+  totalBudget: number;
+  categorySpending: Record<string, number>;
+  userName?: string;
+}
 
-const DashboardPreview = () => {
+const DashboardPreview = ({ 
+  totalSpent, 
+  totalBudget, 
+  categorySpending,
+  userName = "Aarav" 
+}: DashboardPreviewProps) => {
+  const budgetUsage = totalBudget > 0 ? Math.min(Math.round((totalSpent / totalBudget) * 100), 100) : 0;
+  
+  const sortedCategories = Object.entries(categorySpending)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 5);
+
   return (
     <div className="relative">
       <div className="absolute -inset-8 -z-10 rounded-[3rem] bg-gradient-hero opacity-20 blur-3xl" />
@@ -26,7 +37,9 @@ const DashboardPreview = () => {
             <div className="h-2.5 w-2.5 rounded-full bg-chart-4/70" />
             <div className="h-2.5 w-2.5 rounded-full bg-primary/60" />
           </div>
-          <span className="text-xs font-medium text-muted-foreground">budgetbrain.app/dashboard</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            budgetbrain.app/dashboard
+          </span>
           <span className="w-12" />
         </div>
 
@@ -34,11 +47,15 @@ const DashboardPreview = () => {
           {/* Greeting */}
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">May 2026</p>
-              <h3 className="mt-0.5 text-lg font-semibold text-foreground">Good evening, Aarav</h3>
+              <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                {new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+              </p>
+              <h3 className="mt-0.5 text-lg font-semibold text-foreground">Good evening, {userName}</h3>
             </div>
-            <div className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
-              On track
+            <div className={`rounded-full px-3 py-1 text-xs font-semibold ${
+              budgetUsage > 90 ? "bg-destructive/10 text-destructive" : "bg-accent text-accent-foreground"
+            }`}>
+              {budgetUsage > 90 ? "Over budget" : "On track"}
             </div>
           </div>
 
@@ -46,18 +63,24 @@ const DashboardPreview = () => {
           <div className="grid grid-cols-3 gap-3">
             <div className="rounded-2xl bg-gradient-hero p-4 text-primary-foreground shadow-card">
               <Wallet className="h-4 w-4 opacity-80" />
-              <p className="mt-2 text-[10px] font-medium uppercase tracking-wider opacity-80">Spent</p>
-              <p className="text-lg font-bold">₹56,810</p>
+              <p className="mt-2 text-[10px] font-medium uppercase tracking-wider opacity-80">
+                Spent
+              </p>
+              <p className="text-lg font-bold">₹{totalSpent.toLocaleString("en-IN")}</p>
             </div>
             <div className="rounded-2xl border border-border/60 bg-background p-4">
               <TrendingDown className="h-4 w-4 text-primary" />
-              <p className="mt-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Saved</p>
-              <p className="text-lg font-bold text-foreground">₹23,190</p>
+              <p className="mt-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                Remaining
+              </p>
+              <p className="text-lg font-bold text-foreground">₹{Math.max(0, totalBudget - totalSpent).toLocaleString("en-IN")}</p>
             </div>
             <div className="rounded-2xl border border-border/60 bg-background p-4">
               <PieChart className="h-4 w-4 text-primary" />
-              <p className="mt-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">Budget</p>
-              <p className="text-lg font-bold text-foreground">71%</p>
+              <p className="mt-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                Budget
+              </p>
+              <p className="text-lg font-bold text-foreground">{budgetUsage}%</p>
             </div>
           </div>
 
@@ -65,30 +88,29 @@ const DashboardPreview = () => {
           <div className="rounded-2xl border border-border/60 bg-background p-4">
             <div className="mb-3 flex items-center justify-between">
               <p className="text-sm font-semibold text-foreground">Top categories</p>
-              <span className="flex items-center gap-1 text-xs font-medium text-primary">
-                <TrendingUp className="h-3 w-3" /> 12% vs Apr
-              </span>
             </div>
             <div className="space-y-3">
-              {categories.map((c, i) => (
-                <div key={c.name} className="space-y-1.5">
+              {sortedCategories.length > 0 ? sortedCategories.map(([name, amount], i) => (
+                <div key={name} className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-medium text-foreground">{c.name}</span>
+                    <span className="font-medium text-foreground">{name}</span>
                     <span className="font-semibold text-muted-foreground">
-                      ₹{c.amount.toLocaleString("en-IN")}
+                      ₹{amount.toLocaleString("en-IN")}
                     </span>
                   </div>
                   <div className="h-2 overflow-hidden rounded-full bg-secondary">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${c.pct}%` }}
+                      animate={{ width: `${(amount / totalSpent) * 100}%` }}
                       transition={{ duration: 0.8, delay: 0.4 + i * 0.1 }}
                       className="h-full rounded-full"
-                      style={{ background: c.color }}
+                      style={{ background: CATEGORY_COLORS[name as Category] }}
                     />
                   </div>
                 </div>
-              ))}
+              )) : (
+                <p className="py-4 text-center text-xs text-muted-foreground">No expenses yet</p>
+              )}
             </div>
           </div>
         </div>
