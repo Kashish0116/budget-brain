@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -48,9 +49,13 @@ export function AddExpenseDialog({
       amount: 0,
       category: CATEGORIES[0],
       description: "",
-      date: new Date().toISOString().split("T")[0],
+      date: "",
     },
   });
+
+  useEffect(() => {
+    form.setValue("date", new Date().toISOString().split("T")[0]);
+  }, [form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     onAdd({

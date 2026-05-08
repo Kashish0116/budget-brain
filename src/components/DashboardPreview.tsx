@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { TrendingUp, TrendingDown, Wallet, PieChart } from "lucide-react";
 import { CATEGORY_COLORS, Category } from "@/lib/finance";
@@ -15,6 +16,12 @@ const DashboardPreview = ({
   categorySpending,
   userName = "Aarav" 
 }: DashboardPreviewProps) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const budgetUsage = totalBudget > 0 ? Math.min(Math.round((totalSpent / totalBudget) * 100), 100) : 0;
   
   const sortedCategories = Object.entries(categorySpending)
@@ -48,7 +55,7 @@ const DashboardPreview = ({
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                {new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })}
+                {mounted ? new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : "---"}
               </p>
               <h3 className="mt-0.5 text-lg font-semibold text-foreground">Good evening, {userName}</h3>
             </div>
