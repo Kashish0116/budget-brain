@@ -10,6 +10,8 @@ import DashboardPreview from "@/components/DashboardPreview";
 import { TransactionHistory } from "@/components/TransactionHistory";
 import { AddExpenseDialog } from "@/components/AddExpenseDialog";
 import { SetBudgetDialog } from "@/components/SetBudgetDialog";
+import { BankStatementUpload } from "@/components/BankStatementUpload";
+import { BudgetAlerts } from "@/components/BudgetAlerts";
 import InsightsMockup from "@/components/InsightsMockup";
 import { Button } from "@/components/ui/button";
 import { LogOut, LayoutGrid, Plus } from "lucide-react";
@@ -21,6 +23,7 @@ export default function DashboardPage() {
     addTransaction, 
     deleteTransaction, 
     setBudget, 
+    loadDemoData,
     getTotalSpent, 
     getCategorySpending, 
     getTotalBudget,
@@ -68,6 +71,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        <BudgetAlerts budgets={budgets} categorySpending={getCategorySpending()} />
+
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main Stats */}
           <div className="lg:col-span-2 space-y-8">
@@ -99,13 +104,11 @@ export default function DashboardPage() {
                 Quick Actions
               </h3>
               <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start">
+                <Button variant="outline" className="w-full justify-start" onClick={loadDemoData}>
                   <Plus className="mr-2 h-4 w-4" />
-                  Add Income
+                  Load Demo Data
                 </Button>
-                <Button variant="outline" className="w-full justify-start text-muted-foreground" disabled>
-                  Generate Report (Coming soon)
-                </Button>
+                <BankStatementUpload onParsed={(txns) => txns.forEach((t) => addTransaction(t))} />
               </div>
             </div>
           </div>

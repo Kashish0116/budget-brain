@@ -29,8 +29,9 @@ export interface Goal {
   id: string;
   name: string;
   targetAmount: number;
-  savedAmount: number;
-  createdAt: string;
+  currentAmount?: number;
+  deadline?: string;
+  category?: Category;
 }
 
 export const CATEGORIES: Category[] = [

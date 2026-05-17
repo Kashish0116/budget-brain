@@ -9,11 +9,11 @@ import Navbar from "@/components/Navbar";
 import { TransactionHistory } from "@/components/TransactionHistory";
 import { AddExpenseDialog } from "@/components/AddExpenseDialog";
 import { Button } from "@/components/ui/button";
-import { LogOut, Plus } from "lucide-react";
+import { LogOut, Plus, RotateCcw } from "lucide-react";
 
 export default function TransactionsPage() {
   const { user, isLoading, logout } = useAuth();
-  const { transactions, addTransaction, deleteTransaction } = useFinance();
+  const { transactions, addTransaction, deleteTransaction, loadDemoData } = useFinance();
   const router = useRouter();
 
   useEffect(() => {
@@ -47,6 +47,10 @@ export default function TransactionsPage() {
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
+              <Button variant="outline" onClick={loadDemoData}>
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Load Demo Data
+              </Button>
               <AddExpenseDialog onAdd={addTransaction} />
               <Button variant="ghost" onClick={logout} className="text-muted-foreground hover:text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
