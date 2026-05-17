@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { useFinance } from "@/hooks/use-finance";
 import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
 import DashboardPreview from "@/components/DashboardPreview";
 import { TransactionHistory } from "@/components/TransactionHistory";
 import { AddExpenseDialog } from "@/components/AddExpenseDialog";
@@ -43,9 +44,11 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar onConnect={() => {}} />
+      <Sidebar />
+      <Navbar />
 
-      <main className="mx-auto max-w-7xl px-6 py-8">
+      <main className="ml-64 min-h-screen pt-16">
+        <div className="mx-auto max-w-7xl px-6 py-8">
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">
@@ -106,6 +109,7 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </main>
     </div>

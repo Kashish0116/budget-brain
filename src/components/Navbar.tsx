@@ -7,7 +7,7 @@ import { useAuth } from "@/hooks/use-auth";
 
 import { useState, useEffect } from "react";
 
-const Navbar = ({ onConnect }: { onConnect: () => void }) => {
+const Navbar = () => {
   const { user, logout } = useAuth();
   const [mounted, setMounted] = useState(false);
 
@@ -50,18 +50,9 @@ const Navbar = ({ onConnect }: { onConnect: () => void }) => {
               </Button>
             </>
           ) : (
-            <>
-              <Button variant="ghost" size="sm" className="hidden sm:inline-flex" onClick={() => (window.location.hash = "auth")}>
-                Login
-              </Button>
-              <Button
-                size="sm"
-                onClick={onConnect}
-                className="bg-gradient-hero shadow-elegant hover:opacity-90"
-              >
-                Get started
-              </Button>
-            </>
+            <Button variant="ghost" size="sm" className="hidden sm:inline-flex" onClick={() => (window.location.hash = "auth")}>
+              Login
+            </Button>
           )}
         </div>
       </div>

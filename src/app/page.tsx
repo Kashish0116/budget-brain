@@ -5,12 +5,12 @@ import { motion } from "framer-motion";
 import { ArrowRight, Lock, Sparkles, LayoutGrid } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import DashboardPreview from "@/components/DashboardPreview";
-import ConnectAccountsMockup from "@/components/ConnectAccountsMockup";
 import InsightsMockup from "@/components/InsightsMockup";
 import FeatureCards from "@/components/FeatureCards";
-import ConnectAccountDialog from "@/components/ConnectAccountDialog";
 import BudgetBrainLogo from "@/components/BudgetBrainLogo";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useFinance } from "@/hooks/use-finance";
 import { useAuth } from "@/hooks/use-auth";
 import { AddExpenseDialog } from "@/components/AddExpenseDialog";
@@ -22,7 +22,6 @@ const fadeUp = {
 };
 
 export default function Home() {
-  const [openConnect, setOpenConnect] = useState(false);
   const [authTab, setAuthTab] = useState<"login" | "signup">("login");
   const [mounted, setMounted] = useState(false);
 
@@ -40,9 +39,44 @@ export default function Home() {
   } = useFinance();
   const { login, signup } = useAuth();
 
+  const [loginIdentifier, setLoginIdentifier] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [signupUsername, setSignupUsername] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [signupConfirmPassword, setSignupConfirmPassword] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleLogin = async () => {
+    setAuthError("");
+    setIsSubmitting(true);
+
+    const result = login(loginIdentifier.trim(), loginPassword);
+    if (!result.success) {
+      setAuthError(result.message ?? "Unable to sign in. Please try again.");
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSignup = async () => {
+    setAuthError("");
+    if (signupPassword !== signupConfirmPassword) {
+      setAuthError("Passwords do not match.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    const result = signup(signupUsername.trim(), signupEmail.trim(), signupPassword);
+    if (!result.success) {
+      setAuthError(result.message ?? "Unable to sign up. Please try again.");
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Navbar onConnect={() => setOpenConnect(true)} />
+      <Navbar />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -67,14 +101,6 @@ export default function Home() {
               <div className="mt-7 flex flex-wrap gap-3">
                 <AddExpenseDialog onAdd={addTransaction} />
                 <SetBudgetDialog onSet={setBudget} />
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  onClick={() => setOpenConnect(true)}
-                >
-                  <LayoutGrid className="mr-1 h-4 w-4" />
-                  Connect Bank
-                </Button>
               </div>
               <div className="mt-7 flex flex-wrap gap-5 text-xs font-medium text-muted-foreground">
                 <span className="flex items-center gap-1.5">
@@ -133,11 +159,44 @@ export default function Home() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   Log in to continue tracking and optimizing your monthly spending.
                 </p>
-                <Button 
-                  onClick={() => login("Aarav", "aarav@example.com")}
+
+                <div className="mt-6 space-y-4">
+                  <div>
+                    <Label htmlFor="login-identifier">Username or Email</Label>
+                    <Input
+                      id="login-identifier"
+                      value={loginIdentifier}
+                      onChange={(event) => setLoginIdentifier(event.target.value)}
+                      placeholder="Enter your username or email"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="login-password">Password</Label>
+                    <Input
+                      id="login-password"
+                      type="password"
+                      value={loginPassword}
+                      onChange={(event) => setLoginPassword(event.target.value)}
+                      placeholder="Enter your password"
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                {authError ? (
+                  <p className="mt-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    {authError}
+                  </p>
+                ) : null}
+
+                <Button
+                  type="button"
+                  onClick={handleLogin}
+                  disabled={isSubmitting}
                   className="mt-5 w-full bg-gradient-hero shadow-elegant hover:opacity-90"
                 >
-                  Login to BudgetBrain
+                  {isSubmitting ? "Signing in..." : "Login to BudgetBrain"}
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
@@ -147,11 +206,66 @@ export default function Home() {
                 <p className="mt-1 text-sm text-muted-foreground">
                   Sign up to connect your accounts and start getting smart insights.
                 </p>
-                <Button 
-                  onClick={() => signup("Aarav", "aarav@example.com")}
+
+                <div className="mt-6 space-y-4">
+                  <div>
+                    <Label htmlFor="signup-username">Username</Label>
+                    <Input
+                      id="signup-username"
+                      value={signupUsername}
+                      onChange={(event) => setSignupUsername(event.target.value)}
+                      placeholder="Choose a username"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="signup-email">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      value={signupEmail}
+                      onChange={(event) => setSignupEmail(event.target.value)}
+                      placeholder="Enter your email"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="signup-password">Password</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      value={signupPassword}
+                      onChange={(event) => setSignupPassword(event.target.value)}
+                      placeholder="Create a password"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="signup-confirm-password">Confirm password</Label>
+                    <Input
+                      id="signup-confirm-password"
+                      type="password"
+                      value={signupConfirmPassword}
+                      onChange={(event) => setSignupConfirmPassword(event.target.value)}
+                      placeholder="Confirm your password"
+                      className="mt-2"
+                    />
+                  </div>
+                </div>
+
+                {authError ? (
+                  <p className="mt-4 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                    {authError}
+                  </p>
+                ) : null}
+
+                <Button
+                  type="button"
+                  onClick={handleSignup}
+                  disabled={isSubmitting}
                   className="mt-5 w-full bg-gradient-hero shadow-elegant hover:opacity-90"
                 >
-                  Create Free Account
+                  {isSubmitting ? "Creating account..." : "Create Free Account"}
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </div>
@@ -172,8 +286,7 @@ export default function Home() {
               finances clear.
             </p>
           </div>
-          <div className="grid items-center gap-10 lg:grid-cols-3">
-            <ConnectAccountsMockup />
+          <div className="grid items-center gap-10 lg:grid-cols-2">
             <InsightsMockup 
               totalSpent={mounted ? getTotalSpent() : 0}
               totalBudget={mounted ? getTotalBudget() : 0}
@@ -193,7 +306,6 @@ export default function Home() {
         </div>
       </footer>
 
-      <ConnectAccountDialog open={openConnect} onOpenChange={setOpenConnect} />
     </div>
   );
 }
