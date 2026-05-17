@@ -25,6 +25,14 @@ export interface Budget {
   amount: number;
 }
 
+export interface Goal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  savedAmount: number;
+  createdAt: string;
+}
+
 export const CATEGORIES: Category[] = [
   "Food & Dining",
   "Shopping",

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Transaction, Budget, Category } from "@/lib/finance";
+import { Transaction, Budget, Goal, Category } from "@/lib/finance";
 
 export function useFinance() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Load from localStorage
@@ -13,9 +14,11 @@ export function useFinance() {
     try {
       const savedTransactions = localStorage.getItem("bb_transactions");
       const savedBudgets = localStorage.getItem("bb_budgets");
+      const savedGoals = localStorage.getItem("bb_goals");
 
       if (savedTransactions) setTransactions(JSON.parse(savedTransactions));
       if (savedBudgets) setBudgets(JSON.parse(savedBudgets));
+      if (savedGoals) setGoals(JSON.parse(savedGoals));
     } catch (e) {
       console.error("Failed to load finance data", e);
     } finally {
@@ -35,6 +38,12 @@ export function useFinance() {
       localStorage.setItem("bb_budgets", JSON.stringify(budgets));
     }
   }, [budgets, isLoaded]);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("bb_goals", JSON.stringify(goals));
+    }
+  }, [goals, isLoaded]);
 
   const addTransaction = (t: Omit<Transaction, "id">) => {
     const newTransaction = { ...t, id: crypto.randomUUID() };
@@ -71,6 +80,21 @@ export function useFinance() {
     return spending;
   };
 
+  const setGoal = (name: string, targetAmount: number) => {
+    const newGoal: Goal = {
+      id: crypto.randomUUID(),
+      name,
+      targetAmount,
+      savedAmount: 0,
+      createdAt: new Date().toISOString(),
+    };
+    setGoals((prev) => [newGoal, ...prev]);
+  };
+
+  const deleteGoal = (id: string) => {
+    setGoals((prev) => prev.filter((g) => g.id !== id));
+  };
+
   const getTotalBudget = () => {
     return budgets.reduce((acc, b) => acc + b.amount, 0);
   };
@@ -78,10 +102,13 @@ export function useFinance() {
   return {
     transactions,
     budgets,
+    goals,
     isLoaded,
     addTransaction,
     deleteTransaction,
     setBudget,
+    setGoal,
+    deleteGoal,
     getTotalSpent,
     getCategorySpending,
     getTotalBudget,

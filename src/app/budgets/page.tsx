@@ -7,12 +7,13 @@ import { useFinance } from "@/hooks/use-finance";
 import Sidebar from "@/components/Sidebar";
 import Navbar from "@/components/Navbar";
 import { SetBudgetDialog } from "@/components/SetBudgetDialog";
+import { SetGoalDialog } from "@/components/SetGoalDialog";
 import { Button } from "@/components/ui/button";
-import { LogOut, Wallet } from "lucide-react";
+import { LogOut, Wallet, Target } from "lucide-react";
 
 export default function BudgetsPage() {
   const { user, isLoading, logout } = useAuth();
-  const { budgets, setBudget, getTotalBudget } = useFinance();
+  const { budgets, goals, setBudget, setGoal, deleteGoal, getTotalBudget } = useFinance();
   const router = useRouter();
 
   useEffect(() => {
@@ -47,6 +48,7 @@ export default function BudgetsPage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <SetBudgetDialog onSet={setBudget} />
+              <SetGoalDialog onSet={setGoal} />
               <Button variant="ghost" onClick={logout} className="text-muted-foreground hover:text-destructive">
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
@@ -82,6 +84,53 @@ export default function BudgetsPage() {
                 </p>
               </div>
             )}
+          </div>
+
+          <div className="mt-12">
+            <h2 className="mb-6 text-2xl font-bold tracking-tight text-foreground">
+              Financial Goals
+            </h2>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {goals.length > 0 ? (
+                goals.map((goal) => {
+                  const progress = Math.min((goal.savedAmount / goal.targetAmount) * 100, 100);
+                  return (
+                    <div key={goal.id} className="rounded-lg border border-border bg-card p-6 shadow-sm">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Target className="h-5 w-5 text-primary" />
+                          <div>
+                            <p className="font-semibold text-foreground">{goal.name}</p>
+                            <p className="text-sm text-muted-foreground">
+                              ₹{goal.savedAmount.toLocaleString()} / ₹{goal.targetAmount.toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-4">
+                        <div className="mb-1 flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Progress</span>
+                          <span className="font-medium text-foreground">{Math.round(progress)}%</span>
+                        </div>
+                        <div className="h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+                          <div
+                            className="h-full rounded-full bg-primary transition-all"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="col-span-full rounded-lg border border-dashed border-border bg-secondary/30 p-12 text-center">
+                  <Target className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <p className="mt-4 text-muted-foreground">
+                    No goals set yet. Click "Set Goal" to create one.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
